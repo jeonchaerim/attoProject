@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.zerock.myapp.mapper.BoardMapper">
+
+
+   <select id="selectUser" resultType="org.zerock.myapp.domain.UserVO"> 
+            SELECT userid, userpw
+            FROM tbl_user 
+            WHERE userid = #{userid} and userpw = #{userpw}
+   </select>
+  
+  
+   <insert id="insertSelectKey">
+   			<selectKey keyProperty="bno" order="BEFORE" resultType="int">
+   				SELECT "ADMIN"."ISEQ$$_94326".nextval from DUAL
+   			</selectKey>
+   			
+   			INSERT INTO tbl_board(bno, title, content, writer)
+	  		VALUES ( #{bno}, #{title}, #{content}, #{writer} )
+   </insert> 
+  
+    <update id="update">
+        UPDATE tbl_board
+        SET
+            title = #{title},
+            content = #{content},
+            writer = #{writer},
+            update_ts = CURRENT_DATE
+        WHERE bno = #{bno}
+    </update>
+    
+    <select id="selectListwithPaging" resultType="org.zerock.myapp.domain.BoardVO">
+    	SELECT
+    	/*+ INDEX_DESC(tbl_board) */
+    	*
+    	FROM tbl_board
+    	OFFSET (#{currPage}-1) * #{amount} ROWS           
+    	FETCH NEXT #{amount} ROWS ONLY				
+    </select>
+    
+    <select id="selectAdmin" resultType="org.zerock.myapp.domain.AdminVO"> 
+            SELECT adminid, adminpw
+            FROM tbl_admin
+            WHERE adminid = #{adminid} and adminpw = #{adminpw}
+   </select>
+    
+    
+    
+    <update id="updateAnswer">
+        UPDATE tbl_board
+        SET
+            title = #{title},
+            content = #{content},
+            writer = #{writer},
+            update_ts = CURRENT_DATE
+            answer = #{answer}
+        WHERE bno = #{bno}
+    </update>
+  
+</mapper>
